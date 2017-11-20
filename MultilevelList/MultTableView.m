@@ -41,6 +41,8 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
 
 @property (nonatomic, assign) NSInteger selectedIntger;
 
+@property (nonatomic, strong) NSMutableDictionary *colDictionary;
+
 @end
 
 @implementation MultTableView
@@ -53,6 +55,15 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         _rowHeight = 40.0f;
         _isShow = NO;
         _selectedIntger = 0;
+        self.dataArray = [NSArray array];
+        _colDictionary = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                         @"tableOneLevel1":@"0",
+                                                                         @"tableTwoLevel1":@"0",
+                                                                         @"tableTwoLevel2":@"0",
+                                                                         @"tableThreeLevel1":@"0",
+                                                                         @"tableThreeLevel2":@"0",
+                                                                         @"tableThreeLevel3":@"0",
+                                                                         }];
         [self addSubview:self.cancelButton];
         [_cancelButton addSubview:self.tableContainerView];
     }
@@ -95,30 +106,34 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
 #pragma mark -- private method
 
 - (void)loadSelected{
+    
     switch (_type) {
         case MultTableViewTypeOne:
-           
-            [_tableViewOne selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
             [_tableViewOne reloadData];
+            
+             [_tableViewOne selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_colDictionary[@"tableOneLevel1"] integerValue] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
             break;
         case MultTableViewTypeTwo:
-            
-            [_tableViewOne selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-            [_tableViewTwo selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-            _twoTableArray = _dataArray[0][@"subcategories"];//默认选中第一列
+            _twoTableArray = _dataArray[[_colDictionary[@"tableTwoLevel1"] integerValue]][@"subcategories"];//默认选中第一列
             [_tableViewOne reloadData];
             [_tableViewTwo reloadData];
+            
+            [_tableViewOne selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_colDictionary[@"tableTwoLevel1"] integerValue] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [_tableViewTwo selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_colDictionary[@"tableTwoLevel2"] integerValue] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+            
             break;
         case MultTableViewTypeThree:
             
-            [_tableViewOne selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-            [_tableViewTwo selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-            [_tableViewThree selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-            _twoTableArray = [self dataHandler:0];
-            _threeTableArray = _dataArray[0][@"sub"][0][@"sub"];
+            _twoTableArray = [self dataHandler:[_colDictionary[@"tableThreeLevel1"] integerValue]];
+            _threeTableArray = _dataArray[[_colDictionary[@"tableThreeLevel1"] integerValue]][@"sub"][[_colDictionary[@"tableThreeLevel2"] integerValue]][@"sub"];
             [_tableViewOne reloadData];
             [_tableViewTwo reloadData];
             [_tableViewThree reloadData];
+            
+            [_tableViewOne selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_colDictionary[@"tableThreeLevel1"] integerValue] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [_tableViewTwo selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_colDictionary[@"tableThreeLevel2"] integerValue] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [_tableViewThree selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_colDictionary[@"tableThreeLevel3"] integerValue] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+            
             break;
         default:
             break;
@@ -216,11 +231,15 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     if (_type == MultTableViewTypeOne) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewOneCellKey forIndexPath:indexPath];
         cell.textLabel.text =_dataArray[indexPath.row][@"label"];
         cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
-        if (_selectedIntger == indexPath.row) {
+        UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+        background.backgroundColor = [UIColor whiteColor];
+        cell.selectedBackgroundView = background;
+        if ([_colDictionary[@"tableOneLevel1"] integerValue] == indexPath.row) {
             cell.backgroundColor = [UIColor whiteColor];
         }else{
             cell.backgroundColor = RGB(238,243,246);
@@ -235,7 +254,7 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
             background.backgroundColor = [UIColor whiteColor];
             cell.selectedBackgroundView = background;
-            if (_selectedIntger == indexPath.row) {
+            if ([_colDictionary[@"tableTwoLevel1"] integerValue] == indexPath.row) {
                 cell.backgroundColor = [UIColor whiteColor];
             }else{
                 cell.backgroundColor = RGB(238,243,246);
@@ -245,7 +264,14 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewTwoCellKey forIndexPath:indexPath];
             cell.textLabel.text = _twoTableArray[indexPath.row];
             cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+            background.backgroundColor = [UIColor orangeColor];
+            cell.selectedBackgroundView = background;
+            if ([_colDictionary[@"tableTwoLevel2"] integerValue] == indexPath.row) {
+                cell.backgroundColor = [UIColor orangeColor];
+            }else{
+                 cell.backgroundColor = [UIColor whiteColor];
+            }
             return cell;
         }
         
@@ -254,19 +280,40 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewOneCellKey forIndexPath:indexPath];
             cell.textLabel.text = _dataArray[indexPath.row][@"name"];
             cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+            background.backgroundColor = [UIColor whiteColor];
+            cell.selectedBackgroundView = background;
+            if ([_colDictionary[@"tableThreeLevel1"] integerValue] == indexPath.row) {
+                cell.backgroundColor = [UIColor whiteColor];
+            }else{
+                cell.backgroundColor = RGB(238,243,246);
+            }
             return cell;
         }else if (tableView == _tableViewTwo){
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewTwoCellKey forIndexPath:indexPath];
             cell.textLabel.text = _twoTableArray[indexPath.row];
             cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+            background.backgroundColor = RGB(238,243,246);
+            cell.selectedBackgroundView = background;
+            if ([_colDictionary[@"tableThreeLevel2"] integerValue] == indexPath.row) {
+                cell.backgroundColor = RGB(238,243,246);
+            }else{
+                cell.backgroundColor = [UIColor whiteColor];
+            }
             return cell;
         }else if (tableView == _tableViewThree){
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewThreeCellKey forIndexPath:indexPath];
             cell.textLabel.text =  _threeTableArray[indexPath.row];;
             cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+            background.backgroundColor = [UIColor whiteColor];
+            cell.selectedBackgroundView = background;
+            if ([_colDictionary[@"tableThreeLevel3"] integerValue] == indexPath.row) {
+                cell.backgroundColor = [UIColor whiteColor];
+            }else{
+                cell.backgroundColor = RGB(238,243,246);
+            }
             return cell;
         }
     }
@@ -276,24 +323,24 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSMutableString *string = [NSMutableString stringWithString:@""];
-    
+    NSInteger selectedRow = tableView.indexPathForSelectedRow.row;
     if (_type == MultTableViewTypeOne) {
         
         [string appendString:_dataArray[indexPath.row][@"label"]];
         if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
             [self.delegate multTableViewClickWithView:self withSelectText:string];
         }
-        
+        [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableOneLevel1"];
         [self dismissView];
     }else if (_type == MultTableViewTypeTwo){
         
         if (tableView == _tableViewOne) {
-            NSInteger selectedRow = tableView.indexPathForSelectedRow.row;
             _twoTableArray = _dataArray[selectedRow][@"subcategories"];//默认选中第一列
              //[string appendString:_dataArray[selectedRow][@"name"]];
-            _selectedIntger = selectedRow;
-            [_tableViewOne reloadData];
+            [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableTwoLevel1"];
+             [_colDictionary setValue:@"0" forKey:@"tableTwoLevel2"];
             
+            [_tableViewOne reloadData];
             [_tableViewTwo reloadData];
         }else if (tableView == _tableViewTwo){
             //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
@@ -301,6 +348,7 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
                 [self.delegate multTableViewClickWithView:self withSelectText:string];
             }
+            [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableTwoLevel2"];
             [self dismissView];
         }
         
@@ -310,12 +358,17 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
             _twoTableArray = [self dataHandler:_tableViewOne.indexPathForSelectedRow.row];
             _threeTableArray = _dataArray[_tableViewOne.indexPathForSelectedRow.row][@"sub"][_tableViewTwo.indexPathForSelectedRow.row][@"sub"];
+             [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableThreeLevel1"];
+            [_colDictionary setValue:@"0" forKey:@"tableThreeLevel2"];
+            [_colDictionary setValue:@"0" forKey:@"tableThreeLevel3"];
             [_tableViewTwo reloadData];
             [_tableViewThree reloadData];
         }else if (tableView == _tableViewTwo){
             _threeTableArray = _dataArray[_tableViewOne.indexPathForSelectedRow.row][@"sub"][_tableViewTwo.indexPathForSelectedRow.row][@"sub"];
             //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
             //[string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
+             [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableThreeLevel2"];
+             [_colDictionary setValue:@"0" forKey:@"tableThreeLevel3"];
             [_tableViewThree reloadData];
         }else if (tableView == _tableViewThree){
 //            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
@@ -324,6 +377,7 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
                 [self.delegate multTableViewClickWithView:self withSelectText:string];
             }
+             [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableThreeLevel3"];
             [self dismissView];
         }
     }
