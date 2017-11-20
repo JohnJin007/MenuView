@@ -9,6 +9,8 @@
 #import "MultTableView.h"
 #import "Const.h"
 
+#define RGB(r,g,b) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:1.0f]
+
 static NSString *const TableViewOneCellKey = @"TableViewOneCellKey";
 static NSString *const TableViewTwoCellKey = @"TableViewTwoCellKey";
 static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
@@ -37,6 +39,8 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
 //表类型
 @property (nonatomic, assign)MultTableViewType type;
 
+@property (nonatomic, assign) NSInteger selectedIntger;
+
 @end
 
 @implementation MultTableView
@@ -48,6 +52,7 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
     if (self) {
         _rowHeight = 40.0f;
         _isShow = NO;
+        _selectedIntger = 0;
         [self addSubview:self.cancelButton];
         [_cancelButton addSubview:self.tableContainerView];
     }
@@ -215,7 +220,11 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewOneCellKey forIndexPath:indexPath];
         cell.textLabel.text =_dataArray[indexPath.row][@"label"];
         cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
-        cell.backgroundColor = [UIColor grayColor];
+        if (_selectedIntger == indexPath.row) {
+            cell.backgroundColor = [UIColor whiteColor];
+        }else{
+            cell.backgroundColor = RGB(238,243,246);
+        }
         return cell;
     }else if (_type  == MultTableViewTypeTwo){
         if (tableView == _tableViewOne) {
@@ -226,7 +235,11 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
             background.backgroundColor = [UIColor whiteColor];
             cell.selectedBackgroundView = background;
-            cell.backgroundColor = [UIColor grayColor];
+            if (_selectedIntger == indexPath.row) {
+                cell.backgroundColor = [UIColor whiteColor];
+            }else{
+                cell.backgroundColor = RGB(238,243,246);
+            }
             return cell;
         }else if (tableView == _tableViewTwo){
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TableViewTwoCellKey forIndexPath:indexPath];
@@ -278,6 +291,9 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             NSInteger selectedRow = tableView.indexPathForSelectedRow.row;
             _twoTableArray = _dataArray[selectedRow][@"subcategories"];//默认选中第一列
              [string appendString:_dataArray[selectedRow][@"name"]];
+            _selectedIntger = selectedRow;
+            [_tableViewOne reloadData];
+            
             [_tableViewTwo reloadData];
         }else if (tableView == _tableViewTwo){
             [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
