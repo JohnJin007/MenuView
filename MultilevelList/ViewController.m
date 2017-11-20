@@ -7,23 +7,33 @@
 //
 
 #import "ViewController.h"
+#import "Const.h"
+#import "MultMenuView.h"
 
-@interface ViewController ()
+@interface ViewController ()<MultMenuViewDelegate>
+
+@property(nonatomic, strong) MultMenuView *menuView;
 
 @end
 
 @implementation ViewController
 
+#pragma mark -- life cycle
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    self.menuView = [[MultMenuView alloc] initWithFrame:CGRectMake(0, 64, Screen_Width, 36)];
+    self.menuView.delegate = self;
+    [self.view addSubview:self.menuView];
+    
 }
 
+#pragma mark -- MultMenuViewDelegate
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)multMenuViewWithString:(NSString *)text{
+    NSLog(@"------------------:%@",text);
 }
-
 
 @end
