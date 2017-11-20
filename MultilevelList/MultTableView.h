@@ -16,7 +16,7 @@ typedef NS_ENUM(NSInteger, MultTableViewType){
 
 @protocol MultTableViewDelegate <NSObject>
 
-- (void)multTableViewClickWithString:(NSString *)text;
+- (void)multTableViewClickWithView:(UIView *)view withSelectText:(NSString *)text;
 
 @end
 

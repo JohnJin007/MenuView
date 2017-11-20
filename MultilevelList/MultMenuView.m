@@ -97,7 +97,19 @@
 
 #pragma mark -- MultTableViewDelegate
 
-- (void)multTableViewClickWithString:(NSString *)text {
+- (void)multTableViewClickWithView:(UIView *)view withSelectText:(NSString *)text {
+    
+    if (view == self.oneLinkageDropMenu) {
+        [self.oneLinkageButton setTitle:text forState:UIControlStateNormal];
+        [self buttonEdgeInsets:self.oneLinkageButton];
+    }else if (view == self.twoLinkageDropMenu){
+        [self.twoLinkageButton setTitle:text forState:UIControlStateNormal];
+        [self buttonEdgeInsets:self.twoLinkageButton];
+    }else if (view == self.threeLinkageDropMenu){
+        [self.threeLinkageButton setTitle:text forState:UIControlStateNormal];
+        [self buttonEdgeInsets:self.threeLinkageButton];
+    }
+    
     if ([self.delegate respondsToSelector:@selector(multMenuViewWithString:)]) {
         [self.delegate multMenuViewWithString:text];
     }

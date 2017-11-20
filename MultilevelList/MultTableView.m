@@ -280,8 +280,8 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
     if (_type == MultTableViewTypeOne) {
         
         [string appendString:_dataArray[indexPath.row][@"label"]];
-        if ([self.delegate respondsToSelector:@selector(multTableViewClickWithString:)]) {
-            [self.delegate multTableViewClickWithString:string];
+        if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
+            [self.delegate multTableViewClickWithView:self withSelectText:string];
         }
         
         [self dismissView];
@@ -290,16 +290,16 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         if (tableView == _tableViewOne) {
             NSInteger selectedRow = tableView.indexPathForSelectedRow.row;
             _twoTableArray = _dataArray[selectedRow][@"subcategories"];//默认选中第一列
-             [string appendString:_dataArray[selectedRow][@"name"]];
+             //[string appendString:_dataArray[selectedRow][@"name"]];
             _selectedIntger = selectedRow;
             [_tableViewOne reloadData];
             
             [_tableViewTwo reloadData];
         }else if (tableView == _tableViewTwo){
-            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
+            //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
             [string appendString:_twoTableArray[indexPath.row]];
-            if ([self.delegate respondsToSelector:@selector(multTableViewClickWithString:)]) {
-                [self.delegate multTableViewClickWithString:string];
+            if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
+                [self.delegate multTableViewClickWithView:self withSelectText:string];
             }
             [self dismissView];
         }
@@ -307,22 +307,22 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
     }else if (_type == MultTableViewTypeThree){
         
         if (tableView == _tableViewOne) {
-            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
+            //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
             _twoTableArray = [self dataHandler:_tableViewOne.indexPathForSelectedRow.row];
             _threeTableArray = _dataArray[_tableViewOne.indexPathForSelectedRow.row][@"sub"][_tableViewTwo.indexPathForSelectedRow.row][@"sub"];
             [_tableViewTwo reloadData];
             [_tableViewThree reloadData];
         }else if (tableView == _tableViewTwo){
             _threeTableArray = _dataArray[_tableViewOne.indexPathForSelectedRow.row][@"sub"][_tableViewTwo.indexPathForSelectedRow.row][@"sub"];
-            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
-            [string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
+            //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
+            //[string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
             [_tableViewThree reloadData];
         }else if (tableView == _tableViewThree){
-            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
-            [string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
+//            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
+//            [string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
             [string appendString:_threeTableArray[_tableViewThree.indexPathForSelectedRow.row]];
-            if ([self.delegate respondsToSelector:@selector(multTableViewClickWithString:)]) {
-                [self.delegate multTableViewClickWithString:string];
+            if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
+                [self.delegate multTableViewClickWithView:self withSelectText:string];
             }
             [self dismissView];
         }
