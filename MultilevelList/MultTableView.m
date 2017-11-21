@@ -239,11 +239,10 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
         background.backgroundColor = [UIColor whiteColor];
         cell.selectedBackgroundView = background;
+        cell.backgroundColor = [UIColor whiteColor];
         if ([_colDictionary[@"tableOneLevel1"] integerValue] == indexPath.row) {
-            cell.backgroundColor = [UIColor whiteColor];
             cell.textLabel.textColor = [UIColor orangeColor];
         }else{
-            cell.backgroundColor = RGB(238,243,246);
             cell.textLabel.textColor = [UIColor blackColor];
         }
         return cell;
@@ -290,8 +289,10 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             cell.selectedBackgroundView = background;
             if ([_colDictionary[@"tableThreeLevel1"] integerValue] == indexPath.row) {
                 cell.backgroundColor = [UIColor whiteColor];
+                cell.textLabel.textColor = [UIColor orangeColor];
             }else{
                 cell.backgroundColor = RGB(238,243,246);
+                cell.textLabel.textColor = [UIColor blackColor];
             }
             return cell;
         }else if (tableView == _tableViewTwo){
@@ -303,8 +304,10 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             cell.selectedBackgroundView = background;
             if ([_colDictionary[@"tableThreeLevel2"] integerValue] == indexPath.row) {
                 cell.backgroundColor = RGB(238,243,246);
+                cell.textLabel.textColor = [UIColor orangeColor];
             }else{
                 cell.backgroundColor = [UIColor whiteColor];
+                cell.textLabel.textColor = [UIColor blackColor];
             }
             return cell;
         }else if (tableView == _tableViewThree){
@@ -316,8 +319,10 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             cell.selectedBackgroundView = background;
             if ([_colDictionary[@"tableThreeLevel3"] integerValue] == indexPath.row) {
                 cell.backgroundColor = [UIColor whiteColor];
+                cell.textLabel.textColor = [UIColor orangeColor];
             }else{
                 cell.backgroundColor = RGB(238,243,246);
+                cell.textLabel.textColor = [UIColor blackColor];
             }
             return cell;
         }
@@ -361,15 +366,17 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         
         if (tableView == _tableViewOne) {
             //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
-            _twoTableArray = [self dataHandler:_tableViewOne.indexPathForSelectedRow.row];
-            _threeTableArray = _dataArray[_tableViewOne.indexPathForSelectedRow.row][@"sub"][_tableViewTwo.indexPathForSelectedRow.row][@"sub"];
+            _twoTableArray = [self dataHandler:selectedRow];
+            _threeTableArray = _dataArray[selectedRow][@"sub"][0][@"sub"];
              [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableThreeLevel1"];
             [_colDictionary setValue:@"0" forKey:@"tableThreeLevel2"];
             [_colDictionary setValue:@"0" forKey:@"tableThreeLevel3"];
+            [_tableViewOne reloadData];
             [_tableViewTwo reloadData];
             [_tableViewThree reloadData];
         }else if (tableView == _tableViewTwo){
-            _threeTableArray = _dataArray[_tableViewOne.indexPathForSelectedRow.row][@"sub"][_tableViewTwo.indexPathForSelectedRow.row][@"sub"];
+            
+            _threeTableArray = _dataArray[[_colDictionary[@"tableThreeLevel1"] integerValue]][@"sub"][selectedRow][@"sub"];
             //[string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
             //[string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
              [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableThreeLevel2"];
@@ -379,7 +386,7 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         }else if (tableView == _tableViewThree){
 //            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
 //            [string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
-            [string appendString:_threeTableArray[_tableViewThree.indexPathForSelectedRow.row]];
+            [string appendString:_threeTableArray[selectedRow]];
             if ([self.delegate respondsToSelector:@selector(multTableViewClickWithView:withSelectText:)]) {
                 [self.delegate multTableViewClickWithView:self withSelectText:string];
             }
