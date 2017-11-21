@@ -241,8 +241,10 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
         cell.selectedBackgroundView = background;
         if ([_colDictionary[@"tableOneLevel1"] integerValue] == indexPath.row) {
             cell.backgroundColor = [UIColor whiteColor];
+            cell.textLabel.textColor = [UIColor orangeColor];
         }else{
             cell.backgroundColor = RGB(238,243,246);
+            cell.textLabel.textColor = [UIColor blackColor];
         }
         return cell;
     }else if (_type  == MultTableViewTypeTwo){
@@ -256,8 +258,10 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             cell.selectedBackgroundView = background;
             if ([_colDictionary[@"tableTwoLevel1"] integerValue] == indexPath.row) {
                 cell.backgroundColor = [UIColor whiteColor];
+                cell.textLabel.textColor = [UIColor orangeColor];
             }else{
                 cell.backgroundColor = RGB(238,243,246);
+                cell.textLabel.textColor = [UIColor blackColor];
             }
             return cell;
         }else if (tableView == _tableViewTwo){
@@ -265,12 +269,13 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             cell.textLabel.text = _twoTableArray[indexPath.row];
             cell.textLabel.font = [UIFont systemFontOfSize:14.0f];
             UIView *background =  [[UIView alloc]initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
-            background.backgroundColor = [UIColor orangeColor];
+            background.backgroundColor = [UIColor whiteColor];
             cell.selectedBackgroundView = background;
+            cell.backgroundColor = [UIColor whiteColor];
             if ([_colDictionary[@"tableTwoLevel2"] integerValue] == indexPath.row) {
-                cell.backgroundColor = [UIColor orangeColor];
+                cell.textLabel.textColor = [UIColor orangeColor];
             }else{
-                 cell.backgroundColor = [UIColor whiteColor];
+                 cell.textLabel.textColor = [UIColor blackColor];
             }
             return cell;
         }
@@ -369,6 +374,7 @@ static NSString *const TableViewThreeCellKey = @"TableViewThreeCellKey";
             //[string appendString:_twoTableArray[_tableViewTwo.indexPathForSelectedRow.row]];
              [_colDictionary setValue:[NSString stringWithFormat:@"%ld",(long)selectedRow] forKey:@"tableThreeLevel2"];
              [_colDictionary setValue:@"0" forKey:@"tableThreeLevel3"];
+            [_tableViewTwo reloadData];
             [_tableViewThree reloadData];
         }else if (tableView == _tableViewThree){
 //            [string appendString:_dataArray[_tableViewOne.indexPathForSelectedRow.row][@"name"]];
